@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Báo Cáo Nhân Sự - 人力資源報告</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(to bottom right, #f3f4f6, #e5e7eb);
+            min-height: 100vh;
+        }
+        .form-container, .filter-container {
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .form-container label, .filter-container label {
+            font-weight: 600;
+            color: #374151;
+        }
+        .form-container select, .form-container input, .filter-container select, .filter-container input {
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.5rem;
+            transition: border-color 0.2s;
+        }
+        .form-container select:focus, .form-container input:focus, .filter-container select:focus, .filter-container input:focus {
+            border-color: #3b82f6;
+            outline: none;
+        }
+        table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        th {
+            background: #3b82f6;
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+        }
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .action-buttons button {
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+    </style>
+</head>
+<body class="max-w-6xl mx-auto p-6">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Báo Cáo Nhân Sự - 人力資源報告</h1>
+
+    <div class="form-container">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">Gửi Báo Cáo - 提交報告</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block mb-1">Bộ phận - 部門:</label>
+                <select id="department" class="w-full">
+                    <option value="Dệt gòn">Dệt gòn - 織棉</option>
+                    <option value="Chần 1 Kim">Chần 1 Kim - 單針絎縫</option>
+                    <option value="Bao biên">Bao biên - 包邊</option>
+                    <option value="Cắt tự động">Cắt tự động - 自動裁剪</option>
+                    <option value="Vô Nhung">Vô Nhung - 填充絨毛</option>
+                    <option value="Đóng nút+ gắn nhãn">Đóng nút+ gắn nhãn - 扣釦+貼標籤</option>
+                    <option value="Vô gòn Tấm">Vô gòn Tấm - 填充棉板</option>
+                    <option value="Sửa đồ">Sửa đồ - 修補</option>
+                    <option value="Đóng Gói">Đóng Gói - 包裝</option>
+                    <option value="Kiểm Phẩm">Kiểm Phẩm - 品質檢查</option>
+                    <option value="Quản lí">Quản lí - 管理</option>
+                    <option value="Trợ lí+ tạp vụ+khác">Trợ lí+ tạp vụ+khác - 助理+雜務+其他</option>
+                </select>
+            </div>
+            <div>
+                <label class="block mb-1">Số lượng nhân viên - 員工數量:</label>
+                <input type="number" id="employeeCount" step="1" class="w-full">
+            </div>
+            <div>
+                <label class="block mb-1">Hộ sản - 戶產:</label>
+                <input type="number" id="householdProduction" step="1" class="w-full">
+            </div>
+            <div>
+                <label class="block mb-1">Khác - 其他:</label>
+                <input type="number" id="other" step="1" class="w-full">
+            </div>
+            <div>
+                <label class="block mb-1">Thực tế làm - 實際工作:</label>
+                <input type="number" id="actualWork" step="1" class="w-full">
+            </div>
+            <div>
+                <label class="block mb-1">Trực tiếp - 直接:</label>
+                <input type="number" id="direct" step="1" class="w-full">
+            </div>
+            <div>
+                <label class="block mb-1">Gián tiếp - 間接:</label>
+                <input type="number" id="indirect" step="1" class="w-full">
+            </div>
+            <div>
+                <label class="block mb-1">Cho mượn - 借出:</label>
+                <input type="number" id="onLoan" step="1" class="w-full">
+            </div>
+            <div>
+                <label class="block mb-1">Tăng ca - 加班:</label>
+                <input type="number" id="overtime" step="1" class="w-full">
+            </div>
+            <div>
+                <label class="block mb-1">Số lượng điện thoại - 電話數量:</label>
+                <input type="number" id="phoneCount" step="1" class="w-full">
+            </div>
+            <div>
+                <label class="block mb-1">Ngày - 日期:</label>
+                <input type="date" id="date" class="w-full">
+            </div>
+        </div>
+        <button onclick="submitReport()" class="mt-6 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">Gửi Báo Cáo - 提交報告</button>
+    </div>
+
+    <div class="filter-container">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">Danh Sách Báo Cáo - 報告列表</h2>
+        <div class="flex flex-col md:flex-row gap-4">
+            <div>
+                <label class="block mb-1">Bộ phận - 部門:</label>
+                <select id="filterDepartment" class="w-full">
+                    <option value="">Tất cả bộ phận - 所有部門</option>
+                    <option value="Dệt gòn">Dệt gòn - 織棉</option>
+                    <option value="Chần 1 Kim">Chần 1 Kim - 單針絎縫</option>
+                    <option value="Bao biên">Bao biên - 包邊</option>
+                    <option value="Cắt tự động">Cắt tự động - 自動裁剪</option>
+                    <option value="Vô Nhung">Vô Nhung - 填充絨毛</option>
+                    <option value="Đóng nút+ gắn nhãn">Đóng nút+ gắn nhãn - 扣釦+貼標籤</option>
+                    <option value="Vô gòn Tấm">Vô gòn Tấm - 填充棉板</option>
+                    <option value="Sửa đồ">Sửa đồ - 修補</option>
+                    <option value="Đóng Gói">Đóng Gói - 包裝</option>
+                    <option value="Kiểm Phẩm">Kiểm Phẩm - 品質檢查</option>
+                    <option value="Quản lí">Quản lí - 管理</option>
+                    <option value="Trợ lí+ tạp vụ+khác">Trợ lí+ tạp vụ+khác - 助理+雜務+其他</option>
+                </select>
+            </div>
+            <div>
+                <label class="block mb-1">Ngày - 日期:</label>
+                <input type="date" id="filterDate" class="w-full">
+            </div>
+            <div class="flex items-end gap-2">
+                <button onclick="filterReports()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">Lọc - 篩選</button>
+                <button onclick="resetFilters()" class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition">Reset - 重置</button>
+                <button onclick="exportToExcel()" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">Xuất Excel - 導出Excel</button>
+            </div>
+        </div>
+    </div>
+
+    <table id="reportTable">
+        <thead>
+            <tr>
+                <th>Bộ phận - 部門</th>
+                <th>Số lượng nhân viên - 員工數量</th>
+                <th>Hộ sản - 戶產</th>
+                <th>Khác - 其他</th>
+                <th>Thực tế làm - 實際工作</th>
+                <th>Trực tiếp - 直接</th>
+                <th>Gián tiếp - 間接</th>
+                <th>Cho mượn - 借出</th>
+                <th>Tăng ca - 加班</th>
+                <th>Số lượng điện thoại - 電話數量</th>
+                <th>Ngày - 日期</th>
+                <th>Thao tác - 操作</th>
+            </tr>
+        </thead>
+        <tbody id="reportTableBody"></tbody>
+    </table>
+
+    <script>
+        let reports = JSON.parse(localStorage.getItem('reports')) || [];
+
+        function submitReport() {
+            const report = {
+                department: document.getElementById('department').value,
+                employeeCount: parseInt(document.getElementById('employeeCount').value) || 0,
+                householdProduction: parseInt(document.getElementById('householdProduction').value) || 0,
+                other: parseInt(document.getElementById('other').value) || 0,
+                actualWork: parseInt(document.getElementById('actualWork').value) || 0,
+                direct: parseInt(document.getElementById('direct').value) || 0,
+                indirect: parseInt(document.getElementById('indirect').value) || 0,
+                onLoan: parseInt(document.getElementById('onLoan').value) || 0,
+                overtime: parseInt(document.getElementById('overtime').value) || 0,
+                phoneCount: parseInt(document.getElementById('phoneCount').value) || 0,
+                date: document.getElementById('date').value,
+                id: Date.now()
+            };
+
+            const existingReportIndex = reports.findIndex(r => r.department === report.department && r.date === report.date);
+            if (existingReportIndex !== -1) {
+                reports[existingReportIndex] = report;
+            } else {
+                reports.push(report);
+            }
+
+            localStorage.setItem('reports', JSON.stringify(reports));
+            displayReports();
+            clearForm();
+        }
+
+        function displayReports(filterDepartment = '', filterDate = '') {
+            const tbody = document.getElementById('reportTableBody');
+            tbody.innerHTML = '';
+
+            const filteredReports = reports.filter(report => {
+                const matchesDepartment = filterDepartment ? report.department === filterDepartment : true;
+                const matchesDate = filterDate ? report.date === filterDate : true;
+                return matchesDepartment && matchesDate;
+            });
+
+            filteredReports.forEach(report => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${report.department} - ${getChineseTranslation(report.department)}</td>
+                    <td>${report.employeeCount}</td>
+                    <td>${report.householdProduction}</td>
+                    <td>${report.other}</td>
+                    <td>${report.actualWork}</td>
+                    <td>${report.direct}</td>
+                    <td>${report.indirect}</td>
+                    <td>${report.onLoan}</td>
+                    <td>${report.overtime}</td>
+                    <td>${report.phoneCount}</td>
+                    <td>${report.date}</td>
+                    <td class="action-buttons">
+                        <button onclick="editReport(${report.id})" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Sửa - 編輯</button>
+                        <button onclick="deleteReport(${report.id})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">Xóa - 刪除</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function editReport(id) {
+            const report = reports.find(r => r.id === id);
+            if (report) {
+                document.getElementById('department').value = report.department;
+                document.getElementById('employeeCount').value = report.employeeCount;
+                document.getElementById('householdProduction').value = report.householdProduction;
+                document.getElementById('other').value = report.other;
+                document.getElementById('actualWork').value = report.actualWork;
+                document.getElementById('direct').value = report.direct;
+                document.getElementById('indirect').value = report.indirect;
+                document.getElementById('onLoan').value = report.onLoan;
+                document.getElementById('overtime').value = report.overtime;
+                document.getElementById('phoneCount').value = report.phoneCount;
+                document.getElementById('date').value = report.date;
+
+                reports = reports.filter(r => r.id !== id);
+                localStorage.setItem('reports', JSON.stringify(reports));
+            }
+        }
+
+        function deleteReport(id) {
+            reports = reports.filter(r => r.id !== id);
+            localStorage.setItem('reports', JSON.stringify(reports));
+            displayReports();
+        }
+
+        function filterReports() {
+            const filterDepartment = document.getElementById('filterDepartment').value;
+            const filterDate = document.getElementById('filterDate').value;
+            displayReports(filterDepartment, filterDate);
+        }
+
+        function resetFilters() {
+            document.getElementById('filterDepartment').value = '';
+            document.getElementById('filterDate').value = '';
+            displayReports();
+        }
+
+        function clearForm() {
+            document.getElementById('department').value = 'Dệt gòn';
+            document.getElementById('employeeCount').value = '';
+            document.getElementById('householdProduction').value = '';
+            document.getElementById('other').value = '';
+            document.getElementById('actualWork').value = '';
+            document.getElementById('direct').value = '';
+            document.getElementById('indirect').value = '';
+            document.getElementById('onLoan').value = '';
+            document.getElementById('overtime').value = '';
+            document.getElementById('phoneCount').value = '';
+            document.getElementById('date').value = '';
+        }
+
+        function getChineseTranslation(department) {
+            const translations = {
+                'Dệt gòn': '織棉',
+                'Chần 1 Kim': '單針絎縫',
+                'Bao biên': '包邊',
+                'Cắt tự động': '自動裁剪',
+                'Vô Nhung': '填充絨毛',
+                'Đóng nút+ gắn nhãn': '扣釦+貼標籤',
+                'Vô gòn Tấm': '填充棉板',
+                'Sửa đồ': '修補',
+                'Đóng Gói': '包裝',
+                'Kiểm Phẩm': '品質檢查',
+                'Quản lí': '管理',
+                'Trợ lí+ tạp vụ+khác': '助理+雜務+其他'
+            };
+            return translations[department] || '';
+        }
+
+        function exportToExcel() {
+            const filteredReports = reports.filter(report => {
+                const filterDepartment = document.getElementById('filterDepartment').value;
+                const filterDate = document.getElementById('filterDate').value;
+                const matchesDepartment = filterDepartment ? report.department === filterDepartment : true;
+                const matchesDate = filterDate ? report.date === filterDate : true;
+                return matchesDepartment && matchesDate;
+            });
+
+            const data = filteredReports.map(report => ({
+                'Bộ phận - 部門': `${report.department} - ${getChineseTranslation(report.department)}`,
+                'Số lượng nhân viên - 員工數量': report.employeeCount,
+                'Hộ sản - 戶產': report.householdProduction,
+                'Khác - 其他': report.other,
+                'Thực tế làm - 實際工作': report.actualWork,
+                'Trực tiếp - 直接': report.direct,
+                'Gián tiếp - 間接': report.indirect,
+                'Cho mượn - 借出': report.onLoan,
+                'Tăng ca - 加班': report.overtime,
+                'Số lượng điện thoại - 電話數量': report.phoneCount,
+                'Ngày - 日期': report.date
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Báo Cáo Nhân Sự');
+
+            // Generate binary string and create download link
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            const blob = new Blob([wbout], { type: 'application/octet-stream' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'baocao_nhansu.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        displayReports();
+    </script>
+</body>
+</html>
