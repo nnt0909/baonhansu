@@ -26,35 +26,35 @@
                         <option value="Đóng nút+ gắn nhãn - 扣釦+貼標籤">Đóng nút+ gắn nhãn - 扣釦+貼標籤</option>
                         <option value="Vô gòn Tấm - 填充棉板">Vô gòn Tấm - 填充棉板</option>
                         <option value="Sửa đồ - 修補">Sửa đồ - 修補</option>
-                        <option value="Đóng Gói - 包裝">Đóng gói - 包裝</option>
+                        <option value="Đóng Gói - 包裝">Đóng Gói - 包裝</option>
                         <option value="Kiểm Phẩm - 品質檢查">Kiểm Phẩm - 品質檢查</option>
-                        <option value="Quản lí - 管理">Quản lý</option>
-                        <option value="Trợ lí+ tạp vụ+khác - 助理+雜務+其他">Trợ lý + tạp vụ + khác</option>
+                        <option value="Quản lí - 管理">Quản lí - 管理</option>
+                        <option value="Trợ lí+ tạp vụ+khác - 助理+雜務+其他">Trợ lí+ tạp vụ+khác - 助理+雜務+其他</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Số lượng nhân viên - 員工數量:</label>
-                    <input type="employeeCount" name="0" required class="number-input mt-1 block w-full p-2 border border-gray-300 rounded-md" type="number" min="0">
+                    <input type="number" name="employeeCount" min="0" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Hộ sản - 戶產:</label>
-                    <input type="number" name="householdProduction" min="0" class="number-input mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                    <input type="number" name="householdProduction" min="0" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">Khác động - 其他:</label>
+                    <label class="block text-sm font-medium text-gray-700">Khác - 其他:</label>
                     <input type="text" name="other" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Thực tế làm - 實際工作:</label>
-                    <input type="number" name="actualWork" min="0" class="number-input mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                    <input type="number" name="actualWork" min="0" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Trực tiếp - 直接:</label>
-                    <input type="number" name="direct" min="0" class="number-input mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                    <input type="number" name="direct" min="0" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Gián tiếp - 間接:</label>
-                    <input type="number" name="indirect" min="0" class="number-input mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                    <input type="number" name="indirect" min="0" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Cho mượn - 借出:</label>
@@ -62,31 +62,30 @@
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Tăng ca - 加班:</label>
-                    <input type="number" name="overtime" min="0" class="number-input mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                    <input type="number" name="overtime" min="0" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Số lượng điện thoại - 電話數量:</label>
-                    <input type="number-input mt-1 block w-full p-2 border border-gray-300 rounded-md" name="phoneCount" min="number" type="0">
-                    <input type="number">
+                    <input type="number" name="phoneCount" min="0" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-gray-700">Ngày - 日期:</label>
-                    <input type="mt-1 block w-full p-2 border border-gray-300 rounded-md" name="date" required type="date">
+                    <input type="date" name="date" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                 </div>
                 <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-md hover:bg-blue-700">Gửi Báo Cáo - 提交報告</button>
-            </button></form>
+            </form>
         </div>
 
         <!-- Report List Section -->
-        <div class="w-full bg-white p-6 rounded-md shadow-lg">
-            <h2 class="text-lg font-semibold mb-4">Danh Sách Báo Cáo - 報告列表</h2>
-            <div class="mb-4 flex space-x-4">
-                <div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Danh Sách Báo Cáo - 報告列表</h2>
+            <div class="mb-4 flex flex-col sm:flex-row sm:space-x-4">
+                <div class="flex-1">
                     <label class="block text-sm font-medium text-gray-700">Bộ phận - 部門:</label>
                     <select id="filterDepartment" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
-                        <option value="all">Tất cả - 所有部門</option>
+                        <option value="all">Tất cả bộ phận - 所有部門</option>
                         <option value="Dệt gòn - 織棉">Dệt gòn - 織棉</option>
-                        <option value="Chần  chất1 Kim - 單針絎縫">Chần 1 Kim - 單針絎縫</option>
+                        <option value="Chần 1 Kim - 單針絎縫">Chần 1 Kim - 單針絎縫</option>
                         <option value="Bao biên - 包邊">Bao biên - 包邊</option>
                         <option value="Cắt tự động - 自動裁剪">Cắt tự động - 自動裁剪</option>
                         <option value="Vô Nhung - 填充絨毛">Vô Nhung - 填充絨毛</option>
@@ -99,62 +98,62 @@
                         <option value="Trợ lí+ tạp vụ+khác - 助理+雜務+其他">Trợ lí+ tạp vụ+khác - 助理+雜務+其他</option>
                     </select>
                 </div>
-                <div>
+                <div class="flex-1">
                     <label class="block text-sm font-medium text-gray-700">Ngày - 日期:</label>
                     <input type="date" id="filterDate" class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
                 </div>
-                <div class="flex items-end space-x-2">
+                <div class="flex items-end space-x-2 mt-4 sm:mt-0">
                     <button id="filterBtn" class="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700">Lọc - 篩選</button>
                     <button id="resetBtn" class="bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700">Reset - 重置</button>
                     <button id="exportBtn" class="bg-green-600 text-white p-2 rounded-md hover:bg-green-700">Xuất Excel - 導出Excel</button>
                 </div>
             </div>
             <div class="overflow-x-auto">
-                <table id="reportTable" class="w-full border-collapse border border-gray-300">
+                <table id="reportTable" class="min-w-full border-collapse border border-gray-300">
                     <thead>
                         <tr class="bg-blue-200">
-                            <th class="border border-gray-300 p-2">Bộ phận</th>
-                            <th class="border border-gray-300 p-2">Số lượng nhân viên</th>
-                            <th class="border border-gray-300 p-2">Hộ sản xuất</th>
-                            <th class="border border-gray-300 p-2">Khác</th>
-                            <th class="border border-gray-300 p-2">Thực tế làm</th>
-                            <th class="border border-gray-300 p-2">Trực tiếp</th>
-                            <th class="border border-gray-300 p-2">Gián tiếp</th>
-                            <th class="border border-gray-300 p-2">Cho mượn</th>
-                            </th>
-                            <th class="border border-gray-300 p-2">Tăng ca</th>
-                            </th>
-                            <th class="border border-gray-300 p-2">Số lượng điện thoại</th>
-                            </th>
-                            <th class="border border-gray-300 p-2">Ngày</th>
-                            </th class="border border-gray-300 p-2">Thao tác</th>
+                            <th class="border border-gray-300 p-2">Bộ phận - 部門</th>
+                            <th class="border border-gray-300 p-2">Số lượng nhân viên - 員工數量</th>
+                            <th class="border border-gray-300 p-2">Hộ sản - 戶產</th>
+                            <th class="border border-gray-300 p-2">Khác - 其他</th>
+                            <th class="border border-gray-300 p-2">Thực tế làm - 實際工作</th>
+                            <th class="border border-gray-300 p-2">Trực tiếp - 直接</th>
+                            <th class="border border-gray-300 p-2">Gián tiếp - 間接</th>
+                            <th class="border border-gray-300 p-2">Cho mượn - 借出</th>
+                            <th class="border border-gray-300 p-2">Tăng ca - 加班</th>
+                            <th class="border border-gray-300 p-2">Số lượng điện thoại - 電話數量</th>
+                            <th class="border border-gray-300 p-2">Ngày - 日期</th>
+                            <th class="border border-gray-300 p-2">Thao tác - 操作</th>
                         </tr>
                     </thead>
-                    <tbody id="tbody"></tbody>
+                    <tbody id="reportTableBody"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbxKGRRVUz2W-k3J2cKV0Aixg3ucqhn4xnNkDVwwFXv0aYcu3mYrJ9Cd4uE0BMV3aXvL/exec'; // Replace with your deployed URL
+        const API_URL = 'https://script.google.com/macros/s/AKfycbw9LA5LT_U0rYp6jq0H4MBd-krfBEvB-I6MZBA-xqbx9sdAISWTCtiS7s5uL0A3Zo4p/exec';
 
-        // Retry fetch with exponential backoff
-        async function fetchWithRetry(url, options, data, retries = 3, backoff = 1000) {
+        // Retry fetch with exponential backoff and detailed logging
+        async function fetchWithRetry(url, options, retries = 3, backoff = 1000) {
             for (let i = 0; i < retries; i++) {
                 try {
-                    const response = await fetch(url, {
-                        ...options,
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
-                    if (!response.ok) throw new Error(`HTTP ${error}: ${response.status}`);
-                    return response.json();
+                    console.log(`Attempt ${i + 1}: Sending request to ${url}`, options);
+                    const response = await fetch(url, options);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+                    }
+                    const data = await response.json();
+                    console.log('Response received:', data);
+                    return data;
                 } catch (error) {
-                    if (i < 2 - retries - 1) {
+                    console.error(`Attempt ${i + 1} failed:`, error.message);
+                    if (i < retries - 1) {
                         await new Promise(resolve => setTimeout(resolve, backoff * (2 ** i)));
                     } else {
-                        throw error;
+                        throw new Error(`Failed after ${retries} attempts: ${error.message}`);
                     }
                 }
             }
@@ -180,7 +179,11 @@
             };
 
             try {
-                const response = await fetchWithRetry(API_URL, { method: 'POST' }, data);
+                const response = await fetchWithRetry(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
                 if (response.status === 'success') {
                     alert('Báo cáo đã được gửi!');
                     e.target.reset();
@@ -189,6 +192,7 @@
                     alert('Lỗi: ' + response.message);
                 }
             } catch (error) {
+                console.error('Submit error:', error);
                 alert('Lỗi kết nối: ' + error.message);
             }
         });
@@ -196,9 +200,13 @@
         // Fetch and display reports
         async function fetchReports() {
             try {
-                const response = await fetchWithRetry(API_URL, { method: 'POST' }, { action: 'fetch' });
+                const response = await fetchWithRetry(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'fetch' })
+                });
                 if (response.status === 'success') {
-                    const tbody = document.getElementById('tbody');
+                    const tbody = document.getElementById('reportTableBody');
                     tbody.innerHTML = '';
                     response.data.forEach(report => {
                         const tr = document.createElement('tr');
@@ -207,7 +215,7 @@
                             <td class="border border-gray-300 p-2">${report.employeeCount}</td>
                             <td class="border border-gray-300 p-2">${report.householdProduction}</td>
                             <td class="border border-gray-300 p-2">${report.other}</td>
-                            <td class="border border-gray-300 p-2">${report.actualwork}</td>
+                            <td class="border border-gray-300 p-2">${report.actualWork}</td>
                             <td class="border border-gray-300 p-2">${report.direct}</td>
                             <td class="border border-gray-300 p-2">${report.indirect}</td>
                             <td class="border border-gray-300 p-2">${report.lent}</td>
@@ -227,7 +235,11 @@
                             if (confirm('Bạn có chắc muốn xóa báo cáo này?')) {
                                 const id = btn.getAttribute('data-id');
                                 try {
-                                    const response = await fetchWithRetry(API_URL, { method: 'POST' }, { action: 'delete', id: id });
+                                    const response = await fetchWithRetry(API_URL, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ action: 'delete', id })
+                                    });
                                     if (response.status === 'success') {
                                         alert('Báo cáo đã được xóa!');
                                         fetchReports();
@@ -235,6 +247,7 @@
                                         alert('Lỗi: ' + response.message);
                                     }
                                 } catch (error) {
+                                    console.error('Delete error:', error);
                                     alert('Lỗi kết nối: ' + error.message);
                                 }
                             }
@@ -244,6 +257,7 @@
                     alert('Lỗi: ' + response.message);
                 }
             } catch (error) {
+                console.error('Fetch reports error:', error);
                 alert('Lỗi kết nối: ' + error.message);
             }
         }
@@ -253,7 +267,7 @@
             const department = document.getElementById('filterDepartment').value;
             const date = document.getElementById('filterDate').value;
             fetchReports().then(() => {
-                const rows = document.querySelectorAll('#reportTable tbody tr');
+                const rows = document.querySelectorAll('#reportTableBody tr');
                 rows.forEach(row => {
                     const deptCell = row.cells[0].textContent;
                     const dateCell = row.cells[10].textContent;
@@ -273,8 +287,17 @@
         // Export to Excel
         document.getElementById('exportBtn').addEventListener('click', async () => {
             try {
-                const response = await fetchWithRetry(API_URL, { method: 'POST' }, { action: 'export' });
-                const blob = new Blob([response], { type: 'text/csv' });
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'export' })
+                });
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+                }
+                const text = await response.text();
+                const blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
@@ -282,6 +305,7 @@
                 a.click();
                 window.URL.revokeObjectURL(url);
             } catch (error) {
+                console.error('Export error:', error);
                 alert('Lỗi xuất Excel: ' + error.message);
             }
         });
