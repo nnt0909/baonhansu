@@ -133,38 +133,26 @@
     </div>
 
     <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbw9LA5LT_U0rYp6jq0H4MBd-krfBEvB-I6MZBA-xqbx9sdAISWTCtiS7s5uL0A3Zo4p/exec';
-
-        // Retry fetch with exponential backoff and detailed logging
-        async function fetchWithRetry(url, options, retries = 3, backoff = 1000) {
-            for (let i = 0; i < retries; i++) {
-                try {
-                    console.log(`Attempt ${i + 1}: Sending request to ${url}`, options);
-                    const response = await fetch(url, options);
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`HTTP error: ${response.status} - ${errorText}`);
-                    }
-                    const data = await response.json();
-                    console.log('Response received:', data);
-                    return data;
-                } catch (error) {
-                    console.error(`Attempt ${i + 1} failed:`, error.message);
-                    if (i < retries - 1) {
-                        await new Promise(resolve => setTimeout(resolve, backoff * (2 ** i)));
-                    } else {
-                        throw new Error(`Failed after ${retries} attempts: ${error.message}`);
-                    }
-                }
-            }
+        // Use google.script.run for server communication
+        function callServer(action, data, callback) {
+            console.log(`Calling server with action: ${action}`, data);
+            google.script.run
+                .withSuccessHandler(response => {
+                    console.log('Server response:', response);
+                    callback(null, response);
+                })
+                .withFailureHandler(error => {
+                    console.error('Server error:', error);
+                    callback(error, null);
+                })
+                .processRequest(action, data);
         }
 
         // Submit form
-        document.getElementById('reportForm').addEventListener('submit', async (e) => {
+        document.getElementById('reportForm').addEventListener('submit', e => {
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = {
-                action: 'submit',
                 department: formData.get('department'),
                 employeeCount: parseInt(formData.get('employeeCount')) || 0,
                 householdProduction: parseInt(formData.get('householdProduction')) || 0,
@@ -178,12 +166,11 @@
                 date: formData.get('date')
             };
 
-            try {
-                const response = await fetchWithRetry(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
+            callServer('submit', data, (error, response) => {
+                if (error) {
+                    alert('Lỗi kết nối: ' + error.message);
+                    return;
+                }
                 if (response.status === 'success') {
                     alert('Báo cáo đã được gửi!');
                     e.target.reset();
@@ -191,20 +178,16 @@
                 } else {
                     alert('Lỗi: ' + response.message);
                 }
-            } catch (error) {
-                console.error('Submit error:', error);
-                alert('Lỗi kết nối: ' + error.message);
-            }
+            });
         });
 
         // Fetch and display reports
-        async function fetchReports() {
-            try {
-                const response = await fetchWithRetry(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'fetch' })
-                });
+        function fetchReports() {
+            callServer('fetch', {}, (error, response) => {
+                if (error) {
+                    alert('Lỗi kết nối: ' + error.message);
+                    return;
+                }
                 if (response.status === 'success') {
                     const tbody = document.getElementById('reportTableBody');
                     tbody.innerHTML = '';
@@ -231,49 +214,41 @@
 
                     // Add delete event listeners
                     document.querySelectorAll('.delete-btn').forEach(btn => {
-                        btn.addEventListener('click', async () => {
+                        btn.addEventListener('click', () => {
                             if (confirm('Bạn có chắc muốn xóa báo cáo này?')) {
                                 const id = btn.getAttribute('data-id');
-                                try {
-                                    const response = await fetchWithRetry(API_URL, {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ action: 'delete', id })
-                                    });
+                                callServer('delete', { id }, (error, response) => {
+                                    if (error) {
+                                        alert('Lỗi kết nối: ' + error.message);
+                                        return;
+                                    }
                                     if (response.status === 'success') {
                                         alert('Báo cáo đã được xóa!');
                                         fetchReports();
                                     } else {
                                         alert('Lỗi: ' + response.message);
                                     }
-                                } catch (error) {
-                                    console.error('Delete error:', error);
-                                    alert('Lỗi kết nối: ' + error.message);
-                                }
+                                });
                             }
                         });
                     });
                 } else {
                     alert('Lỗi: ' + response.message);
                 }
-            } catch (error) {
-                console.error('Fetch reports error:', error);
-                alert('Lỗi kết nối: ' + error.message);
-            }
+            });
         }
 
         // Filter reports
         document.getElementById('filterBtn').addEventListener('click', () => {
             const department = document.getElementById('filterDepartment').value;
             const date = document.getElementById('filterDate').value;
-            fetchReports().then(() => {
-                const rows = document.querySelectorAll('#reportTableBody tr');
-                rows.forEach(row => {
-                    const deptCell = row.cells[0].textContent;
-                    const dateCell = row.cells[10].textContent;
-                    const show = (department === 'all' || deptCell === department) && (!date || dateCell === date);
-                    row.style.display = show ? '' : 'none';
-                });
+            fetchReports();
+            const rows = document.querySelectorAll('#reportTableBody tr');
+            rows.forEach(row => {
+                const deptCell = row.cells[0].textContent;
+                const dateCell = row.cells[10].textContent;
+                const show = (department === 'all' || deptCell === department) && (!date || dateCell === date);
+                row.style.display = show ? '' : 'none';
             });
         });
 
@@ -285,29 +260,24 @@
         });
 
         // Export to Excel
-        document.getElementById('exportBtn').addEventListener('click', async () => {
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'export' })
-                });
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`HTTP error: ${response.status} - ${errorText}`);
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            callServer('export', {}, (error, response) => {
+                if (error) {
+                    alert('Lỗi xuất Excel: ' + error.message);
+                    return;
                 }
-                const text = await response.text();
-                const blob = new Blob([text], { type: 'text/csv;charset=utf-8' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'HR_Reports.csv';
-                a.click();
-                window.URL.revokeObjectURL(url);
-            } catch (error) {
-                console.error('Export error:', error);
-                alert('Lỗi xuất Excel: ' + error.message);
-            }
+                if (response.status === 'success') {
+                    const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'HR_Reports.csv';
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    alert('Lỗi: ' + response.message);
+                }
+            });
         });
 
         // Initial load
