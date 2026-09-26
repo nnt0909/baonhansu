@@ -133,6 +133,19 @@
     </div>
 
     <script>
+        // Helper function to escape HTML to prevent XSS
+        function escapeHTML(str) {
+            return String(str).replace(/[&<>'"]/g,
+                tag => ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    "'": '&#39;',
+                    '"': '&quot;'
+                }[tag] || tag)
+            );
+        }
+
         // Use google.script.run for server communication
         function callServer(action, data, callback) {
             console.log(`Calling server with action: ${action}`, data);
@@ -151,6 +164,12 @@
         // Submit form
         document.getElementById('reportForm').addEventListener('submit', e => {
             e.preventDefault();
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Đang xử lý...';
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
             const formData = new FormData(e.target);
             const data = {
                 department: formData.get('department'),
@@ -167,6 +186,10 @@
             };
 
             callServer('submit', data, (error, response) => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+
                 if (error) {
                     alert('Lỗi kết nối: ' + error.message);
                     return;
@@ -194,19 +217,19 @@
                     response.data.forEach(report => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td class="border border-gray-300 p-2">${report.department}</td>
-                            <td class="border border-gray-300 p-2">${report.employeeCount}</td>
-                            <td class="border border-gray-300 p-2">${report.householdProduction}</td>
-                            <td class="border border-gray-300 p-2">${report.other}</td>
-                            <td class="border border-gray-300 p-2">${report.actualWork}</td>
-                            <td class="border border-gray-300 p-2">${report.direct}</td>
-                            <td class="border border-gray-300 p-2">${report.indirect}</td>
-                            <td class="border border-gray-300 p-2">${report.lent}</td>
-                            <td class="border border-gray-300 p-2">${report.overtime}</td>
-                            <td class="border border-gray-300 p-2">${report.phoneCount}</td>
-                            <td class="border border-gray-300 p-2">${report.date}</td>
+                            <td class="border border-gray-300 p-2">${escapeHTML(report.department)}</td>
+                            <td class="border border-gray-300 p-2">${escapeHTML(report.employeeCount)}</td>
+                            <td class="border border-gray-300 p-2">${escapeHTML(report.householdProduction)}</td>
+                            <td class="border border-gray-300 p-2">${escapeHTML(report.other)}</td>
+                            <td class="border border-gray-300 p-2">${escapeHTML(report.actualWork)}</td>
+                            <td class="border border-gray-300 p-2">${escapeHTML(report.direct)}</td>
+                            <td class="border border-gray-300 p-2">${escapeHTML(report.indirect)}</td>
+                            <td class="border border-gray-300 p-2">${escapeHTML(report.lent)}</td>
+                            <td class="border border-gray-300 p-2">${escapeHTML(report.overtime)}</td>
+                            <td class="border border-gray-300 p-2">${escapeHTML(report.phoneCount)}</td>
+                            <td class="border border-gray-300 p-2">${escapeHTML(report.date)}</td>
                             <td class="border border-gray-300 p-2">
-                                <button class="bg-red-600 text-white p-1 rounded hover:bg-red-700 delete-btn" data-id="${report.id}">Xóa</button>
+                                <button class="bg-red-600 text-white p-1 rounded hover:bg-red-700 delete-btn" data-id="${escapeHTML(report.id)}">Xóa</button>
                             </td>
                         `;
                         tbody.appendChild(tr);
@@ -242,7 +265,6 @@
         document.getElementById('filterBtn').addEventListener('click', () => {
             const department = document.getElementById('filterDepartment').value;
             const date = document.getElementById('filterDate').value;
-            fetchReports();
             const rows = document.querySelectorAll('#reportTableBody tr');
             rows.forEach(row => {
                 const deptCell = row.cells[0].textContent;
@@ -256,7 +278,10 @@
         document.getElementById('resetBtn').addEventListener('click', () => {
             document.getElementById('filterDepartment').value = 'all';
             document.getElementById('filterDate').value = '';
-            fetchReports();
+            const rows = document.querySelectorAll('#reportTableBody tr');
+            rows.forEach(row => {
+                row.style.display = '';
+            });
         });
 
         // Export to Excel
@@ -267,7 +292,8 @@
                     return;
                 }
                 if (response.status === 'success') {
-                    const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8' });
+                    const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+                    const blob = new Blob([bom, response.data], { type: 'text/csv;charset=utf-8' });
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
                     a.href = url;
@@ -281,6 +307,7 @@
         });
 
         // Initial load
+        document.querySelector('input[name="date"]').value = new Date().toISOString().split('T')[0];
         fetchReports();
     </script>
 </body>
